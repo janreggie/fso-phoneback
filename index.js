@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { response } from 'express'
 const app = express()
 app.use(express.json())
 
@@ -50,6 +50,30 @@ app.get('/api/persons/:id', (request, response) => {
   if (!person) {
     return response.status(400).json({error: `couldn't find person with id ${request.params.id}`})
   }
+  return response.json(person)
+})
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+  if (!body.name || !body.number) {
+    return response.status(400).json({error: `name or number missing`})
+  }
+  if (persons.find(pp => pp.name === body.name)) {
+    return response.status(400).json({error: `name ${body.name} already found`})
+  }
+
+  // randomly generate ID
+  let id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  while (persons.find(pp => pp.id === id)) {
+    id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+  }
+
+  const person = {
+    id: id,
+    name: body.name,
+    number: body.number
+  }
+  persons = persons.concat(person)
   return response.json(person)
 })
 
