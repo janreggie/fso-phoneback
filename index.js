@@ -3,18 +3,13 @@ import morgan from 'morgan'
 const app = express()
 app.use(express.json())
 
+morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(
   [
-    'Request details: :date :method :url :req[Content-Type].',
+    'Request details: :date :method :url :req[Content-Type] :body.',
     'Response: :status in :response-time ms'
   ].join('\n')
 ))
-app.use((req, _res, next) => {
-  if (req.method !== 'GET') {
-    console.log('Request body:', req.body)
-  }
-  next()
-})
 
 let persons = [
   {
