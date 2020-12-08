@@ -1,6 +1,20 @@
-import express, { response } from 'express'
+import express from 'express'
+import morgan from 'morgan'
 const app = express()
 app.use(express.json())
+
+app.use(morgan(
+  [
+    'Request details: :date :method :url :req[Content-Type].',
+    'Response: :status in :response-time ms'
+  ].join('\n')
+))
+app.use((req, _res, next) => {
+  if (req.method !== 'GET') {
+    console.log('Request body:', req.body)
+  }
+  next()
+})
 
 let persons = [
   {
@@ -48,7 +62,7 @@ app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(pp => pp.id === id)
   if (!person) {
-    return response.status(400).json({error: `couldn't find person with id ${request.params.id}`})
+    return response.status(400).json({ error: `couldn't find person with id ${request.params.id}` })
   }
   return response.json(person)
 })
@@ -56,10 +70,10 @@ app.get('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
   if (!body.name || !body.number) {
-    return response.status(400).json({error: `name or number missing`})
+    return response.status(400).json({ error: `name or number missing` })
   }
   if (persons.find(pp => pp.name === body.name)) {
-    return response.status(400).json({error: `name ${body.name} already found`})
+    return response.status(400).json({ error: `name ${body.name} already found` })
   }
 
   // randomly generate ID
