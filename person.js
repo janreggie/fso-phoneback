@@ -5,8 +5,17 @@ import uniqueValidator from 'mongoose-unique-validator'
 dotenv.config()
 
 const personSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  number: { type: String, required: true }
+  name: {
+    type: String,
+    required: [true, 'name must be provided'],
+    unique: [true, '{VALUE} already in phonebook'],
+    minLength: [3, 'name too short']
+  },
+  number: {
+    type: String,
+    required: [true, 'number must be provided'],
+    minLength: [8, 'number too short']
+  }
 })
 personSchema.plugin(uniqueValidator)
 

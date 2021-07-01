@@ -68,7 +68,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     return response.status(400).json({ error: 'number not provided' })
   }
 
-  Person.findByIdAndUpdate(request.params.id, { number: body.number }, { new: true })
+  Person.findByIdAndUpdate(request.params.id, { number: body.number }, { new: true, runValidators: true })
   .then(savedPerson => response.json(savedPerson))
   .catch(error => next(error))
 })

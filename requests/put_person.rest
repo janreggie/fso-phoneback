@@ -2,5 +2,5 @@ PUT http://localhost:3001/api/persons/60b71b850c54a572dc34c502
 Content-Type: application/json
 
 {
-  "number": "1-800-CARAMBA"
+  "number": "1-800-SAVEME"
 }
