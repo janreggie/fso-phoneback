@@ -1,9 +1,15 @@
+import dotenv from 'dotenv'
 import mongoose from 'mongoose'
+import uniqueValidator from 'mongoose-unique-validator'
+
+dotenv.config()
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String
+  name: { type: String, required: true, unique: true },
+  number: { type: String, required: true }
 })
+personSchema.plugin(uniqueValidator)
+
 personSchema.set('toJSON', {
   transform: (_document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

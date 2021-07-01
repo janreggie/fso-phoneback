@@ -50,36 +50,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
 
   const body = request.body
-  if (!body) {
-    return response.status(400).json({ error: 'content missing' })
-  }
-  if (!body.name) {
-    return response.status(400).json({ error: 'name not provided' })
-  }
-  if (!body.number) {
-    return response.status(400).json({ error: 'number not provided' })
-  }
 
-  Person.findOne({ name: body.name })
-  .then(pp => { // Check if the person already exists in the database
-    if (pp) {
-      return fetch(`/api/persons/${pp.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ number: body.number })
-      })
-
-    } else {
-      pp = new person({
-        name: body.name,
-        number: body.number
-      })
-      return pp.save().then(savedperson => response.json(savedperson))
-    }
-  })
-  .then(savedperson => response.json(savedperson))
+  Person.create({ name: body.name, number: body.number })
+  .then(createdPerson => createdPerson.save())
+  .then(savedPerson => savedPerson.toJSON())
+  .then(formattedPerson => response.json(formattedPerson))
   .catch(error => next(error))
-
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -114,6 +90,8 @@ const errorHandler = (error, _request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
   }
   next(error)
 }
