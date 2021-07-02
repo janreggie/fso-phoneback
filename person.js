@@ -31,7 +31,7 @@ const Person = mongoose.model('Person', personSchema)
 
 const url = process.env.MONGODB_URI
 if (!url) {
-  console.log(`please set environment variable MONGODB_URI`)
+  console.log('please set environment variable MONGODB_URI')
   process.exit(1)
 }
 
